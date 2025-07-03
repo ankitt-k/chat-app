@@ -7,17 +7,32 @@ import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 
-// ✅ Allowed frontend origins
-const allowedOrigins = [
-  "http://localhost:5173", // Local development
-  "https://chat-app-client-cyan-zeta.vercel.app", // Your deployed frontend
-];
-
-// ✅ Create Express app and HTTP server
+// ✅ Setup express and http server
 const app = express();
 const server = http.createServer(app);
 
-// ✅ Initialize socket.io with proper CORS
+// ✅ Allowed frontend origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://chat-app-client-cyan-zeta.vercel.app",
+];
+
+// ✅ Apply middleware
+app.use(express.json({ limit: "4mb" }));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// ✅ Socket.io setup
 export const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
@@ -25,10 +40,8 @@ export const io = new Server(server, {
   },
 });
 
-// ✅ Store online users
 export const userSocketMap = {}; // { userId: socketId }
 
-// ✅ Socket.io connection handler
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
   console.log("User Connected:", userId);
@@ -45,23 +58,6 @@ io.on("connection", (socket) => {
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
-
-// ✅ Middleware
-app.use(express.json({ limit: "4mb" }));
-
-// ✅ CORS middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
 
 // ✅ Routes
 app.use("/api/status", (req, res) => res.send("Server is live"));
