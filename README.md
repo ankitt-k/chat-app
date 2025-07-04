@@ -8,6 +8,10 @@ QuickChat is a modern, responsive chat application UI built with React and Tailw
 
 ![chat2](https://github.com/user-attachments/assets/f1df4441-7ee2-4508-9866-42dee099d2dd)
 
+![chat3](https://github.com/user-attachments/assets/1cfce3f5-a160-423b-8eec-ee5ed3152ab4)
+
+![chat4](https://github.com/user-attachments/assets/4a1a77ca-5483-4eff-896b-fd04d4418e24)
+
 
 # Features
 🔥 Beautiful, glassmorphic UI with responsive design
